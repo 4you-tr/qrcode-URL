@@ -91,14 +91,105 @@ function handleQRCode(element, id) {
   if (!dialogContent) return;
   openDialog(id, "qrcode");
   dialogContent.textContent = "";
-  const qrcode = new QRCode(dialogContent, {
-    text: element.dataset.url,
-    width: 200,
-    height: 200,
-    colorDark : "#000000",
-    colorLight : "#ffffff",
-    correctLevel : QRCode.CorrectLevel.H
-  });   
+  
+  try {
+    // console.log("QR kod oluşturuluyor...", element.dataset.url);
+    
+    // Önce bir div içine QR kodu oluştur
+    const qrContainer = document.createElement('div');
+    qrContainer.id = 'qr-temp-container';
+    dialogContent.appendChild(qrContainer);
+    
+    // QR kod oluştur
+    const qrcode = new QRCode(qrContainer, {
+      text: element.dataset.url,
+      width: 200,
+      height: 200,
+      colorDark : "#000000",
+      colorLight : "#ffffff",
+      correctLevel : QRCode.CorrectLevel.H
+    });
+    
+    // Logo eklemek için QR kodun yüklenmesini bekle
+    setTimeout(() => {
+      try {
+        // console.log("QR kod oluşturuldu, canvas oluşturuluyor...");
+        
+        // Yeni bir canvas oluştur
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = 200;
+        canvas.height = 200;
+        
+        // QR kod içeriğini bul
+        const qrImg = qrContainer.querySelector('img');
+        
+        // Önce QR kodu canvas'a çiz
+        const drawQrAndLogo = function() {
+          try {
+            // QR kodu canvas'a çiz
+            context.fillStyle = '#ffffff';
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(qrImg, 0, 0, canvas.width, canvas.height);
+            
+            // Logo ekle
+            const logo = new Image();
+            logo.onload = function() {
+              try {
+                // Logo boyutu ve pozisyonu
+                const logoSize = canvas.width * 0.25; // QR kodun %25'i kadar
+                const logoX = (canvas.width - logoSize) / 2;
+                const logoY = (canvas.height - logoSize) / 2;
+                
+                // Ortada beyaz bir arka plan çiz
+                context.fillStyle = '#ffffff';
+                context.fillRect(logoX, logoY, logoSize, logoSize);
+                
+                // Logoyu ortaya çiz
+                context.drawImage(logo, logoX, logoY, logoSize, logoSize);
+                
+                // Logonun etrafına çerçeve çiz
+                context.strokeStyle = '#AAAAAA'; // Siyah çerçeve
+                context.lineWidth = 1;  // Çerçeve kalınlığı
+                context.strokeRect(logoX, logoY, logoSize, logoSize);
+                
+                // Orijinal QR kod container'ını kaldır ve canvas ekle
+                qrContainer.remove();
+                dialogContent.appendChild(canvas);
+                
+                // console.log("QR kod ve logo başarıyla canvas'a çizildi");
+              } catch (err) {
+                // console.error("Logo çizilirken hata oluştu:", err);
+              }
+            };
+            
+            logo.onerror = function() {
+              // console.error("Logo yüklenemedi");
+              // Logo olmadan QR kodu göster
+              qrContainer.remove();
+              dialogContent.appendChild(canvas);
+            };
+            
+            // Logo yükle
+            logo.src = '/images/logo.png';
+          } catch (err) {
+            // console.error("QR kod canvas'a çizilirken hata oluştu:", err);
+          }
+        };
+        
+        // QR resmi yüklenmişse çiz, değilse yüklendiğinde çiz
+        if (qrImg.complete) {
+          drawQrAndLogo();
+        } else {
+          qrImg.onload = drawQrAndLogo;
+        }
+      } catch (err) {
+        // console.error("Canvas oluşturulurken hata oluştu:", err);
+      }
+    }, 100);
+  } catch (err) {
+    // console.error("QR kod oluşturulurken hata oluştu:", err);
+  }
 }
 
 // copy the link to clipboard

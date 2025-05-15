@@ -1,10 +1,10 @@
-<p align="center"><a href="https://kutt.it" title="kutt.it"><img src="https://raw.githubusercontent.com/thedevs-network/kutt/9d1c873897c3f5b9a1bd0c74dc5d23f2ed01f2ec/static/images/logo-github.png" alt="Kutt.it"></a></p>
+<p align="center"><a href="https://4you.tr" title="4you.tr"><img src="https://raw.githubusercontent.com/4you-tr/qrcode-URL/refs/heads/main/static/images/qr-logo.png" alt="4you.tr"></a></p>
 
-# Kutt.it
+# 4you.tr
 
 **Kutt** is a modern URL shortener with support for custom domains. Create and edit links, view statistics, manage users, and more.
 
-[https://kutt.it](https://kutt.it)
+[https://4you.tr](https://4you.tr)
 
 
 [![docker-build-release](https://github.com/thedevs-network/kutt/actions/workflows/docker-build-release.yaml/badge.svg)](https://github.com/thedevs-network/kutt/actions/workflows/docker-build-release.yaml)
